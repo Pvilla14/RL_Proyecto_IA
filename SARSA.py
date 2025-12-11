@@ -335,6 +335,8 @@ if __name__ == "__main__":
             
             results = {"wins": 0, "losses": 0, "draws": 0}
 
+            #Se cambio a asi que se reevalue politica luego de cada juego por que si no todos los juegos eran iguales y eran {"wins": 1000, "losses": 0, "draws": 0}
+            #o {"wins": 0, "losses": 1000, "draws": 0} o {"wins": 0, "losses": 0, "draws": 1000}
             for i in range(games):
                 res = evaluate_policy_self(Q0, Q1)
                 results["wins"] += res["wins"]
