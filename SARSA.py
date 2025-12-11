@@ -237,8 +237,8 @@ def train_selfplay_sarsa(num_episodes=5000,
     return Q[0], Q[1]
 
 
-def evaluate_policy_random(Q0, games=500):
-    """Evalúa Player 0 vs oponente aleatorio usando Q0 (greedy)."""
+def evaluate_policy_random(Q, games=500):
+    """Evalúa Player 0 vs oponente aleatorio usando Q (greedy)."""
     game = pyspiel.load_game("connect_four")
     results = {"wins": 0, "losses": 0, "draws": 0}
 
@@ -249,7 +249,7 @@ def evaluate_policy_random(Q0, games=500):
             if state.current_player() == 0:
                 s_key = state_to_key(state, 0)
                 legal = state.legal_actions(0)
-                a = max(legal, key=lambda x: Q0.get((s_key, x), 0.0))
+                a = max(legal, key=lambda x: Q.get((s_key, x), 0.0))
                 state.apply_action(a)
             else:
                 opp_legal = state.legal_actions(1)
@@ -306,7 +306,7 @@ if __name__ == "__main__":
     num_episodes = 10000
 
     #ESCOGER MODO DE ENTRENAMIENTO
-    mode = "selfplay"       #"selfplay" o "vs_random"
+    mode = "vs_random"       #"selfplay" o "vs_random"
 
     if mode == "vs_random":
         # Intentar cargar Q existente
@@ -317,12 +317,10 @@ if __name__ == "__main__":
             Q = defaultdict(float, data)
         else:
             Q = defaultdict(float)
-
-        Q, stats = train_sarsa_vs_random(num_episodes=num_episodes,Q=Q)
-
-        print("Guardando Q...")
-        with open("q_table_sarsa.pkl", "wb") as f:
-            pickle.dump(dict(Q), f)
+            Q, stats = train_sarsa_vs_random(num_episodes=num_episodes,Q=Q)
+            print("Guardando Q...")
+            with open("q_table_sarsa.pkl", "wb") as f:
+                pickle.dump(dict(Q), f)
 
         print("Eval:", evaluate_policy_random(Q, games=games))
 
